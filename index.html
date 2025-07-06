@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ansökan – cooked sleep schedule</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e1e;
+      color: white;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #ff7f50;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      background: #2b2b2b;
+      color: white;
+      border: 1px solid #444;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.7rem 1.5rem;
+      background-color: #ff7f50;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .success {
+      margin-top: 1rem;
+      color: #7CFC00;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ansökan – cooked sleep schedule</h1>
+  <form id="applicationForm">
+    <label>Hur länge är du uppe?
+      <input type="text" name="upptid" required />
+    </label>
+    
+    <label>Om dina föräldrar kommer in i rummet när du spelar på natten och säger att du ska stänga av, vad gör du?
+      <textarea name="föräldrar" rows="3" required></textarea>
+    </label>
+    
+    <label>Hur ofta duschar du?
+      <input type="text" name="dusch" required />
+    </label>
+    
+    <label>Hur ofta byter du kläder?
+      <input type="text" name="kläder" required />
+    </label>
+    
+    <label>Har du jobb?
+      <input type="text" name="jobb" required />
+    </label>
+    
+    <button type="submit">Skicka ansökan</button>
+    <div class="success" id="successMsg" style="display:none;">Ansökan skickad!</div>
+  </form>
+
+  <script>
+    const form = document.getElementById('applicationForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = new FormData(form);
+      const payload = {
+        content: "**Ny ansökan till 'cooked sleep schedule'**",
+        embeds: [{
+          title: "Svar:",
+          color: 16753920,
+          fields: [
+            { name: "🕒 Hur länge är du uppe", value: data.get("upptid") },
+            { name: "👪 Om dina föräldrar kommer in...", value: data.get("föräldrar") },
+            { name: "🚿 Hur ofta duschar du", value: data.get("dusch") },
+            { name: "👕 Hur ofta byter du kläder", value: data.get("kläder") },
+            { name: "💼 Har du jobb", value: data.get("jobb") },
+          ]
+        }]
+      };
+
+      try {
+        await fetch("YOUR_WEBHOOK_URL_HERE", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        document.getElementById("successMsg").style.display = "block";
+        form.reset();
+      } catch (err) {
+        alert("Något gick fel! Kontrollera din webhook.");
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
